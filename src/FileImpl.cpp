@@ -8,9 +8,11 @@
 #include <sys/types.h>
 #include "../include/Exceptions.h"
 #include <vector>
+#include <fcntl.h>
 
 FileImpl::FileImpl(const char *pathToFile, bool readOnly) {
-    this->fileDescriptor = open(pathToFile, readOnly);
+    int openMode = readOnly ? O_RDONLY : O_RDWR;
+    this->fileDescriptor = open(pathToFile, openMode);
 
     if(this->fileDescriptor == -1) throw new IOException(CF_EIO, "Open Failed");
 
