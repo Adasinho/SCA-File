@@ -5,13 +5,14 @@
 using namespace std;
 
 int main() {
-    try{
+    try {
         auto fileImpl = new FileImpl("./dataToRead.txt", false);
-        auto *buffer = new OctetSequence();
+        auto *buffer = new OctetSequence(fileImpl->sizeOf());
 
         auto *readyBuffer = new OctetSequence({'s', 'a', 's', 'w'});
         fileImpl->writeFile(readyBuffer);
 
+        fileImpl->setFilePointer(5);
         fileImpl->readFile(buffer, fileImpl->sizeOf());
 
         for(auto i : *buffer)

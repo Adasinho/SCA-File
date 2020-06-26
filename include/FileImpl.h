@@ -10,14 +10,16 @@
 
 class FileImpl : public File {
     int fileDescriptor;
-    off_t size;
+
+    void throwException(int errorCode);
+
 public:
     FileImpl(const char *pathToFile, bool readOnly);
-    virtual void readFile(OctetSequence *&data,const uint32_t &length);
-    virtual void writeFile(OctetSequence *data);
-    virtual uint32_t sizeOf();
-    virtual void closeFile();
-    virtual void setFilePointer(const uint32_t &filePointer);
+    void readFile(OctetSequence *&data,const uint32_t &length) override;
+    void writeFile(OctetSequence *data) override;
+    uint32_t sizeOf() override;
+    void closeFile() override;
+    void setFilePointer(const uint32_t &filePointer) override;
 };
 
 #endif //RADMOR_FILEIMPL_H

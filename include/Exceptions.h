@@ -6,20 +6,57 @@
 #define RADMOR_EXCEPTIONS_H
 
 #include <string>
+#include <exception>
+#include <errno.h>
 
 using namespace std;
 
 enum ErrorNumberType
 {
-    CF_NOTSET, CF_E2BIG, CF_EACCES, CF_EAGAIN, CF_EBADF, CF_EBADMSG,
-    CF_EBUSY, CF_ECANCELED, CF_ECHILD, CF_EDEADLK, CF_EDOM,
-    CF_EEXIST, CF_EFAULT, CF_EFBIG, CF_EINPROGRESS,
-    CF_EINTR,CF_EINVAL, CF_EIO, CF_EISDIR, CF_EMFILE, CF_EMLINK,
-    CF_EMSGSIZE, CF_ENAMETOOLONG, CF_ENFILE, CF_ENODEV, CF_ENOENT,
-    CF_ENOEXEC, CF_ENOLCK, CF_ENOMEM, CF_ENOSPC, CF_ENOSYS,
-    CF_ENOTDIR, CF_ENOTEMPTY, CF_ENOTSUP ,CF_ENOTTY, CF_ENXIO,
-    CF_EPERM, CF_EPIPE, CF_ERANGE , CF_EROFS, CF_ESPIPE, CF_ESRCH,
-    CF_ETIMEDOUT ,CF_EXDEV
+    CF_NOTSET,
+    CF_E2BIG,
+    CF_EACCES = EACCES,
+    CF_EAGAIN = EAGAIN,
+    CF_EBADF = EBADF,
+    CF_EBADMSG,
+    CF_EBUSY,
+    CF_ECANCELED,
+    CF_ECHILD,
+    CF_EDEADLK,
+    CF_EDOM,
+    CF_EEXIST = EEXIST,
+    CF_EFAULT = EFAULT,
+    CF_EFBIG = EFBIG,
+    CF_EINPROGRESS,
+    CF_EINTR = EINTR,
+    CF_EINVAL = EINVAL,
+    CF_EIO = EIO,
+    CF_EISDIR = EISDIR,
+    CF_EMFILE = EMFILE,
+    CF_EMLINK,
+    CF_EMSGSIZE,
+    CF_ENAMETOOLONG = ENAMETOOLONG,
+    CF_ENFILE = ENFILE,
+    CF_ENODEV,
+    CF_ENOENT = ENOENT,
+    CF_ENOEXEC,
+    CF_ENOLCK,
+    CF_ENOMEM = ENOMEM,
+    CF_ENOSPC = ENOSPC,
+    CF_ENOSYS,
+    CF_ENOTDIR = ENOTDIR,
+    CF_ENOTEMPTY,
+    CF_ENOTSUP,
+    CF_ENOTTY,
+    CF_ENXIO = ENXIO,
+    CF_EPERM = EPERM,
+    CF_EPIPE = EPIPE,
+    CF_ERANGE,
+    CF_EROFS = EROFS,
+    CF_ESPIPE,
+    CF_ESRCH,
+    CF_ETIMEDOUT,
+    CF_EXDEV
 };
 
 class IOException {
@@ -39,6 +76,9 @@ class FileException {
     ErrorNumberType errorNumber_;
 
 public:
+    ErrorNumberType errorNumber () const { return errorNumber_; };
+    string msg () const { return msg_; };
+
     FileException(const ErrorNumberType& errorNumber, const string& msg);
     ~FileException();
 };

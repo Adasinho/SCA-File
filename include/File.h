@@ -17,7 +17,7 @@ typedef vector<octet> OctetSequence;
 class File {
 protected:
     string fileName_;
-    uint32_t filePointer_ = 10;
+    uint32_t filePointer_ = 0;
 
 public:
     virtual void readFile(OctetSequence *&data, const uint32_t &length) = 0;
