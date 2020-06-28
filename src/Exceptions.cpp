@@ -12,6 +12,12 @@ IOException::IOException(const ErrorNumberType &errorNumber, const string &msg) 
     this->msg_ = msg;
 }
 
+const char *IOException::what() const throw() {
+    return exception::what();
+}
+
+IOException::~IOException() = default;
+
 FileException::FileException(const ErrorNumberType &errorNumber, const string &msg) {
     this->errorNumber_ = errorNumber;
     this->msg_ = msg;

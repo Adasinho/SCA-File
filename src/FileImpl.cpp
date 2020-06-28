@@ -7,7 +7,6 @@
 #include "FileImpl.h"
 #include <sys/types.h>
 #include <unistd.h>
-#include <vector>
 
 FileImpl::FileImpl(const char *pathToFile, bool readOnly) {
     int openMode = readOnly ? O_RDONLY : O_RDWR;
@@ -15,7 +14,7 @@ FileImpl::FileImpl(const char *pathToFile, bool readOnly) {
 
     if(this->fileDescriptor == -1) {
         int errorCode = errno;
-        this->throwException(errorCode);
+        throwException(errorCode);
     }
 }
 
@@ -24,7 +23,7 @@ void FileImpl::readFile(OctetSequence *&data, const uint32_t &length) {
 
     if(bytesRead == -1) {
         int errorCode = errno;
-        this->throwException(errorCode);
+        throwException(errorCode);
     }
 }
 
@@ -33,7 +32,7 @@ void FileImpl::writeFile(OctetSequence *data) {
 
     if(writeBytes == -1) {
         int errorCode = errno;
-        this->throwException(errorCode);
+        throwException(errorCode);
     }
 }
 
@@ -49,7 +48,7 @@ void FileImpl::closeFile() {
 
     if(status == -1) {
         int errorCode = errno;
-        this->throwException(errorCode);
+        throwException(errorCode);
     }
 }
 
@@ -122,5 +121,8 @@ void FileImpl::throwException(int errorCode) {
             break;
         case CF_EPIPE:
             throw new IOException(CF_EPIPE, "Broken pipe");
+            break;
+        default:
+            throw new IOException(CF_NOTSET, "Unknown error");
     }
 }

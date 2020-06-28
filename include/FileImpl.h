@@ -6,12 +6,11 @@
 #define RADMOR_FILEIMPL_H
 
 #include "File.h"
-#include <string>
 
 class FileImpl : public File {
     int fileDescriptor;
 
-    void throwException(int errorCode);
+    static void throwException(int errorCode);
 
 public:
     FileImpl(const char *pathToFile, bool readOnly);

@@ -4,9 +4,7 @@
 
 using namespace std;
 
-#include <cstdint>
 #include <vector>
-#include <string>
 
 #ifndef RADMOR_FILE_H
 #define RADMOR_FILE_H
