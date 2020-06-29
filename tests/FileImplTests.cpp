@@ -90,11 +90,11 @@ TEST(FileImplTest, givenFileImplAndNonExistFileWhenReadFileThenThrowNoSuchFileOr
  * 3.1.3.4.1.5.1.5 Exceptions/Errors
     The read operation shall raise the IOException when a read error occurs.
  */
-TEST(FileImplTest, givenFileImplAndTryReadDirectoryWhenReadFileThenThrowPermissionDeniedException) {
+TEST(FileImplTest, givenFileImplAndTryReadDirectoryWhenReadFileThenThrowIsADirectoryException) {
     try {
         auto fileImpl = make_unique<FileImpl>(FOLDER_WITH_TXT_FILES.c_str(), false);
     } catch (IOException* exception) {
-        EXPECT_EQ(CF_EACCES, exception->errorNumber());
+        EXPECT_EQ(CF_EISDIR, exception->errorNumber());
     }
 }
 
@@ -134,5 +134,62 @@ TEST(FileImplTest, givenFileImplAndReadOnlyFileWhenWriteFileThenThrowBadFileDesc
         fileImpl->writeFile(reinterpret_cast<OctetSequence *&>(expected));
     } catch (IOException* exception) {
         EXPECT_EQ(CF_EBADF, exception->errorNumber());
+    }
+}
+
+/*
+ * 3.1.3.4.1.5.3 sizeOf
+ * 3.1.3.4.1.5.3.4 Returns
+    The sizeOf operation shall return the number of octets stored in the file.
+ */
+TEST(FileImplTest, givenFileImplWhenSizeOfThenReturnNumberOfOctetsStoredInTheFile) {
+    auto fileImpl = make_unique<FileImpl>(PATH_TO_READ_ONLY_FILE.c_str(), false);
+
+    auto expected = make_unique<OctetSequence>(TEXT_IN_READ_ONLY_FILE.begin(), TEXT_IN_READ_ONLY_FILE.end());
+    EXPECT_EQ(string(expected->begin(), expected->end()).length(), fileImpl->sizeOf());
+}
+
+/*
+ * 3.1.3.4.1.5.5 setFilePointer
+ * 3.1.3.4.1.5.5.3 Behavior
+    The setFilePointer operation shall set the filePointer attribute value to the input filePointer.
+ */
+TEST(FileImplTest, givenFileImplWhenSetFilePointerThenChangeFilePointer) {
+    auto fileImpl = make_unique<FileImpl>(PATH_TO_READ_ONLY_FILE.c_str(), false);
+    auto filePointerOffset = 5;
+    fileImpl->setFilePointer(filePointerOffset);
+
+    EXPECT_EQ(filePointerOffset, fileImpl->filePointer());
+}
+
+/*
+ * 3.1.3.4.1.5.5 setFilePointer
+ * 3.1.3.4.1.5.5.5 Exceptions/Errors
+    The setFilePointer operation shall raise the InvalidFilePointer exception when the value of the
+    filePointer parameter exceeds the file size.
+ */
+TEST(FileImplTest, givenFileImplAndFilePointerExceedsTheFileSizeWhenSetFilePointerThenThrowException) {
+    auto fileImpl = make_unique<FileImpl>(PATH_TO_READ_ONLY_FILE.c_str(), false);
+    auto filePointerOffset = fileImpl->sizeOf() + 5;
+    try {
+        fileImpl->setFilePointer(filePointerOffset);
+    } catch (InvalidFilePointer* exception) {
+        EXPECT_TRUE(true);
+    }
+}
+
+/*
+ * 3.1.3.4.1.5.5 setFilePointer
+ * 3.1.3.4.1.5.5.5 Exceptions/Errors
+    The setFilePointer operation shall raise the CF FileException when the file pointer for the
+    referenced file cannot be set to the value of the input filePointer parameter.
+ */
+TEST(FileImplTest, givenFileImplWhenSetFilePointerToNegativeValueThenThrowException) {
+    auto fileImpl = make_unique<FileImpl>(PATH_TO_READ_ONLY_FILE.c_str(), false);
+    auto filePointerOffset = -5;
+    try {
+        fileImpl->setFilePointer(filePointerOffset);
+    } catch (FileException* exception) {
+        EXPECT_EQ(CF_EINVAL, exception->errorNumber());
     }
 }

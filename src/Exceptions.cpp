@@ -23,5 +23,14 @@ FileException::FileException(const ErrorNumberType &errorNumber, const string &m
     this->msg_ = msg;
 }
 
+const char *FileException::what() const noexcept {
+    return exception::what();
+}
+
+FileException::~FileException() = default;
+
+InvalidFilePointer::~InvalidFilePointer() = default;
+
+InvalidFilePointer::InvalidFilePointer() = default;
 
 #endif //RADMOR_FILEIMPL_H

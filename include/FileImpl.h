@@ -10,8 +10,6 @@
 class FileImpl : public File {
     int fileDescriptor;
 
-    static void throwException(int errorCode);
-
 public:
     FileImpl(const char *pathToFile, bool readOnly);
     void readFile(OctetSequence *&data,const uint32_t &length) override;

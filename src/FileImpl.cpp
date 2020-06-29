@@ -56,76 +56,12 @@ void FileImpl::closeFile() {
 }
 
 void FileImpl::setFilePointer(const uint32_t &filePointer) {
-    lseek(this->fileDescriptor, filePointer, SEEK_SET);
-    this->filePointer_ = filePointer;
-}
-
-void FileImpl::throwException(int errorCode) {
-    switch(errorCode) {
-        case CF_EACCES:
-            throw new IOException(CF_EACCES, "Permission Denied");
-            break;
-        case CF_EAGAIN:
-            throw new IOException(CF_EAGAIN, "Resource temporarily unavailable");
-            break;
-        case CF_EBADF:
-            throw new IOException(CF_EBADF, "Bad file descriptor");
-            break;
-        case CF_EEXIST:
-            throw new IOException(CF_EEXIST, "File exists");
-            break;
-        case CF_EINTR:
-            throw new IOException(CF_EINTR, "Interrupted function call");
-            break;
-        case CF_EIO:
-            throw new IOException(CF_EIO, "Input/output error");
-            break;
-        case CF_EISDIR:
-            throw new IOException(CF_EISDIR, "Is a directory");
-            break;
-        case CF_EMFILE:
-            throw new IOException(CF_EMFILE, "Too many open files");
-            break;
-        case CF_ENAMETOOLONG:
-            throw new IOException(CF_ENAMETOOLONG, "Filename too long (91 in Cyg?)");
-            break;
-        case CF_ENFILE:
-            throw new IOException(CF_ENFILE, "Too many open files in system");
-            break;
-        case CF_ENOENT:
-            throw new IOException(CF_ENOENT, "No such file or directory");
-            break;
-        case CF_ENOMEM:
-            throw new IOException(CF_ENOMEM, "Not enough space");
-            break;
-        case CF_ENOSPC:
-            throw new IOException(CF_ENOSPC, "No space left on device");
-            break;
-        case CF_ENOTDIR:
-            throw new IOException(CF_ENOTDIR, "Not a directory");
-            break;
-        case CF_ENXIO:
-            throw new IOException(CF_ENXIO, "No such device or address");
-            break;
-        case CF_EROFS:
-            throw new IOException(CF_EROFS, "Read-only file system");
-            break;
-        case CF_EFAULT:
-            throw new IOException(CF_EFAULT, "Bad address");
-            break;
-        case CF_EINVAL:
-            throw new IOException(CF_EINVAL, "Invalid argument");
-            break;
-        case CF_EFBIG:
-            throw new IOException(CF_EFBIG, "File too large");
-            break;
-        case CF_EPERM:
-            throw new IOException(CF_EPERM, "Operation not permitted");
-            break;
-        case CF_EPIPE:
-            throw new IOException(CF_EPIPE, "Broken pipe");
-            break;
-        default:
-            throw new IOException(CF_NOTSET, "Unknown error");
+    int status = lseek(this->fileDescriptor, filePointer, SEEK_SET);
+    if(status == -1) {
+        int errorCode = errno;
+        throwException(errorCode);
     }
+
+    if(filePointer > this->sizeOf()) throw new InvalidFilePointer();
+    this->filePointer_ = filePointer;
 }
