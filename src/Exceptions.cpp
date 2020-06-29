@@ -12,7 +12,7 @@ IOException::IOException(const ErrorNumberType &errorNumber, const string &msg) 
     this->msg_ = msg;
 }
 
-const char *IOException::what() const throw() {
+const char *IOException::what() const noexcept {
     return exception::what();
 }
 

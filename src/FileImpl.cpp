@@ -19,7 +19,10 @@ FileImpl::FileImpl(const char *pathToFile, bool readOnly) {
 }
 
 void FileImpl::readFile(OctetSequence *&data, const uint32_t &length) {
-    ssize_t bytesRead = read(this->fileDescriptor, data->data(), length);
+    bool tryReadMoreThanExist = (length + this->filePointer()) > this->sizeOf();
+    uint32_t lengthOfTextToRead = tryReadMoreThanExist ? this->sizeOf() - this->filePointer() : length;
+
+    ssize_t bytesRead = read(this->fileDescriptor, data->data(), lengthOfTextToRead);
 
     if(bytesRead == -1) {
         int errorCode = errno;
